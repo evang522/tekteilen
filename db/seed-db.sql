@@ -31,7 +31,7 @@ INSERT INTO projects (
 CREATE TABLE users (
   id serial PRIMARY KEY,
   fullname text not null,
-  email text not null,
+  email text not null UNIQUE,
   created timestamp DEFAULT current_timestamp,
   merit int DEFAULT 5,
   isAdmin boolean DEFAULT false,

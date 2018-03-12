@@ -8,6 +8,7 @@ const logger = require('morgan');
 const {PORT} = require('./config');
 const projectsRoute = require('./routes/projects.routes');
 const usersRoute = require('./routes/users.routes');
+const authRoute = require('./routes/authentication.routes');
 
 
 
@@ -24,6 +25,7 @@ app.use(logger('common'));
 // Bring in Routes for API resources
 app.use('/api', projectsRoute);
 app.use('/api', usersRoute);
+app.use('/api', authRoute);
 
 
 
