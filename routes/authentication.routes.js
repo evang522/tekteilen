@@ -6,11 +6,16 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const {JWT_SECRET} = require('../config');
+const jwtAuth = require('../jwtauth');
 
 //==========================LOGIN ROUTE=============================>
 
 router.post('/login', (req, res, next) => {
   const {email, password: incomingPassword} = req.body;
+
+  // The user has submitted an email and password to the server. 
+  // We are going to query the DB to get the user's information which is associated with the email address.
+  // Then, we will use bcrypt to compre it with the hashed password in the database. 
 
   knex('users')
     .select('password', 'fullname', 'isadmin')
@@ -44,15 +49,32 @@ router.post('/login', (req, res, next) => {
           res
             .status(200)
             .json({token});
-
         }
       });
 
     })
     .catch(err => {
+      // If there is an error (such as a bad password), it will be passed to the error handler
       next(err);
     });
 
 });
+
+
+
+router.get('/refresh', jwtAuth, (req,res,next) => {
+  const newTokenInfo = {
+    email:req.user.email,
+    fullname: req.user.fullname,
+    isadmin: req.user.isadmin,
+  };
+
+  const token = jwt.sign(newTokenInfo, JWT_SECRET, {expiresIn: '5d'});
+  res
+    .status(200)
+    .json({token});
+});
+
+
 
 module.exports = router;
