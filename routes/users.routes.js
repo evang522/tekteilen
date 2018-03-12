@@ -13,9 +13,9 @@ const bcrypt = require('bcryptjs');
 //====================================GET ALL USERS============================================================>
 router.get('/users', (req, res, next) => {
   knex('users')
-    .select('title', 'id', 'technologies', 'discussion', 'created', 'status', 'submittedby', 'volunteers', 'neededby', 'description')
-    .then(projects => {
-      res.json(projects);
+    .select('id', 'fullname', 'email', 'created', 'merit', 'isadmin', 'phone')
+    .then(users => {
+      res.json(users);
     })
     .catch(next);
 
@@ -25,10 +25,10 @@ router.get('/users', (req, res, next) => {
 router.get('/users/:id', (req, res, next) => {
   const {id} = req.params;
   knex('users')
-    .select('title', 'id', 'technologies', 'discussion', 'created', 'status', 'submittedby', 'volunteers', 'neededby', 'description')
+    .select('id', 'fullname', 'email', 'created', 'merit', 'isadmin', 'phone')
     .where({id})
-    .then(projects => {
-      res.json(projects);
+    .then(user => {
+      res.json(user);
     });
 });
 
@@ -81,7 +81,7 @@ router.post('/users', (req, res, next) => {
     bcrypt.hash(newUser.password, salt, (err,hash) => {
       newUser.password= hash;
       return knex('users')
-        .returning(['id', 'fullname', 'email', 'created', 'merit', 'isadmin', 'phone', 'password'])
+        .returning(['id', 'fullname', 'email', 'created', 'merit', 'isadmin', 'phone'])
         .insert(newUser)
         .then(newProject => {
           res.status(201).json(newProject);
@@ -94,56 +94,60 @@ router.post('/users', (req, res, next) => {
 
 //==========================================================PUT/ UPDATE USER ROUTE=====================================>
 
-router.put('/users/:id', (req,res,next) => {
-  const { id } = req.params;
-  const updateFieldList = [
-    'title',
-    'technologies',
-    'discussion',
-    'status',
-    'submittedby',
-    'volunteers',
-    'neededby',
-    'description'
-  ];
+// A Put route for users is important for being able to change a name, password, or otherwise. But I'll make this later as it's not essential
+// to what I'm currently doing.
 
-  const updateData= {};
 
-  updateFieldList.forEach(field => {
-    if (field in req.body) {
-      updateData[field] = req.body[field];
-    }
-  });
+// router.put('/users/:id', (req,res,next) => {
+//   const { id } = req.params;
+//   const updateFieldList = [
+//     'title',
+//     'technologies',
+//     'discussion',
+//     'status',
+//     'submittedby',
+//     'volunteers',
+//     'neededby',
+//     'description'
+//   ];
 
-  knex('users')
-    .where({
-      'id':id
-    })
-    .returning([
-      'title',
-      'id',
-      'technologies',
-      'discussion',
-      'created',
-      'status',
-      'submittedby',
-      'volunteers',
-      'neededby',
-      'description'
-    ])
-    .update(updateData)
-    .then(response => {
-      if (response === []) {
-        const err = new Error({
-          message: 'Project with this ID was not found.',
-          status:404
-        });
-        return next(err);
-      }
-      res.status(200).json(response);
-    })
-    .catch(next);
-});
+//   const updateData= {};
+
+//   updateFieldList.forEach(field => {
+//     if (field in req.body) {
+//       updateData[field] = req.body[field];
+//     }
+//   });
+
+//   knex('users')
+//     .where({
+//       'id':id
+//     })
+//     .returning([
+//       'title',
+//       'id',
+//       'technologies',
+//       'discussion',
+//       'created',
+//       'status',
+//       'submittedby',
+//       'volunteers',
+//       'neededby',
+//       'description'
+//     ])
+//     .update(updateData)
+//     .then(response => {
+//       if (response === []) {
+//         const err = new Error({
+//           message: 'Project with this ID was not found.',
+//           status:404
+//         });
+//         return next(err);
+//       }
+//       res.status(200).json(response);
+//     })
+//     .catch(next);
+// });
 
 //===================================DELETE USER ROUTE==================================================>
 router.delete('/users/:id', (req,res,next) => {
@@ -157,7 +161,7 @@ router.delete('/users/:id', (req,res,next) => {
         return res.status(204).end();
       } 
       const err = new Error;
-      err.message = 'A project with this ID could not be found, so nothing was deleted';
+      err.message = 'A user with this ID could not be found, so nothing was deleted';
       err.status = 404;
       return next(err);
     })
