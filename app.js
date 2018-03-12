@@ -30,7 +30,7 @@ app.use('/api', authRoute);
 
 
 app.get('/', (req,res,next) => {
-  res.send('Something is working!');
+  res.send(`This is a backend server that serves an API. The server is currently listening on port ${PORT}. Please visit the frontend.`);
 });
 
 
