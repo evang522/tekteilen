@@ -7,6 +7,8 @@
 const express = require('express');
 const router = express.Router();
 const knex = require('../db/connect');
+const bcrypt = require('bcryptjs');
+// const salt = bcrypt.genSalt(10);
 
 //====================================GET ALL USERS============================================================>
 router.get('/users', (req, res, next) => {
@@ -34,43 +36,60 @@ router.get('/users/:id', (req, res, next) => {
 
 //=====================================================CREATE NEW USER=================================================>
 router.post('/users', (req, res, next) => {
-  const fieldList = [
-    'title',
-    'technologies',
-    'discussion',
-    'status',
-    'submittedby',
-    'volunteers',
-    'neededby',
-    'description'
-  ];
-  const fields = {};
-  fieldList.forEach(field => {
-    if (field === 'title' && !req.body.field) {
-      console.log('missing field');
+
+  const requiredFields = ['fullname','email','password'];
+  const newUser = {};
+
+
+  // VALIDATION
+
+  requiredFields.forEach(field => {
+    if (!(field in req.body)) {
+      const err = new Error;
+      err.message = `Missing ${field} field`;
+      err.status = 400;
+      return next(err);
     }
-    fields[field] = req.body[field];
+    newUser[field] = req.body[field];
+
   });
 
-  knex('users')
-    .returning([
-      'title',
-      'id',
-      'technologies',
-      'discussion',
-      'created',
-      'status',
-      'submittedby',
-      'volunteers',
-      'neededby',
-      'description'
-    ])
-    .insert(fields)
-    .then(newProject => {
-      res.status(201).json(newProject);
-    })
-    .catch(next);
 
+  if (newUser.password.length < 8) {
+    const err = new Error;
+    err.status = 400;
+    err.message = 'Password should be at least 8 characters long';
+    return next(err);
+  }
+
+  if (newUser.password.trim().length !== newUser.password.length) {
+    const err = new Error;
+    err.status = 400;
+    err.message = 'Password should not contain white space';
+    return next(err);
+  }
+
+  if (!newUser.email.includes('@')) {
+    const err = new Error;
+    err.status = 400;
+    err.message = 'Email format is not correct';
+    return next(err);
+  }
+
+
+  bcrypt.genSalt(10, (err,salt) => {
+    bcrypt.hash(newUser.password, salt, (err,hash) => {
+      newUser.password= hash;
+      return knex('users')
+        .returning(['id', 'fullname', 'email', 'created', 'merit', 'isadmin', 'phone', 'password'])
+        .insert(newUser)
+        .then(newProject => {
+          res.status(201).json(newProject);
+        })
+        .catch(next);
+  
+    });
+  });
 });
 
 //==========================================================PUT/ UPDATE USER ROUTE=====================================>
@@ -117,7 +136,7 @@ router.put('/users/:id', (req,res,next) => {
       if (response === []) {
         const err = new Error({
           message: 'Project with this ID was not found.',
-          stats:404
+          status:404
         });
         return next(err);
       }

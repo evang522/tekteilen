@@ -7,6 +7,7 @@ const app = express();
 const logger = require('morgan');
 const {PORT} = require('./config');
 const projectsRoute = require('./routes/projects.routes');
+const usersRoute = require('./routes/users.routes');
 
 
 
@@ -22,6 +23,7 @@ app.use(logger('common'));
 
 // Bring in Routes for API resources
 app.use('/api', projectsRoute);
+app.use('/api', usersRoute);
 
 
 
@@ -32,12 +34,14 @@ app.get('/', (req,res,next) => {
 
 
 app.use((err,req,res,next) => {
+  if (process.env.ENVIRONMENT === 'dev') {
+    console.log(err);
+  }
   err.status = err.status || 500;
   err.message = err.message || 'Internal Server Error';
-  console.log(err);
   res.status(err.status).json({
     message: err.message,
-    stats:err.status
+    status:err.status
   });
 });
 

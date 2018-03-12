@@ -10,7 +10,7 @@ CREATE TABLE projects (
   technologies text[],
   discussion json,
   created timestamp DEFAULT current_timestamp,
-  status projectstatus DEFAULT 'open',
+  status projectstatus,
   submittedby text,
   -- TODO need to reference user IDs
   volunteers text[],
@@ -35,12 +35,13 @@ CREATE TABLE users (
   created timestamp DEFAULT current_timestamp,
   merit int DEFAULT 5,
   isAdmin boolean DEFAULT false,
-  phone text
+  phone text,
+  password text not null
 );
 
 
 INSERT INTO users (
-  fullname, email, phone
+  fullname, email, phone, password
 ) VALUES (
-  'Evan Garrett', 'evang522@gmail.com', '912 312 2193'
+  'Jodi Garrett', 'jodijean8@gmail.com', '912 661 8269', 'mypass'
 );
