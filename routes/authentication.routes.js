@@ -21,12 +21,18 @@ router.post('/login', (req, res, next) => {
     .select('password', 'fullname', 'isadmin')
     .where('email', email)
     .then(results => {
+      if (!results || results.length === 0) {
+        const err = new Error;
+        err.message = 'User does not exist';
+        err.status = 400;
+        return next(err);
+      }
       const dbPassword = results[0].password;
       bcrypt.compare(incomingPassword, dbPassword, (err, result) => {
         if (err) {
           return next(err);
         }
-        if (!result) {
+        if (!result || result.length === 0) {
           const err = new Error;
           err.message = 'Incorrect password';
           err.status = 400;

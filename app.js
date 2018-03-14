@@ -28,13 +28,13 @@ app.use(logger('common'));
 
 
 // Bring in Routes for API resources
+app.use('/api', authRoute);
 app.use('/api', projectsRoute);
 app.use('/api', usersRoute);
-app.use('/api', authRoute);
 
 
 
-app.get('/', (req,res,next) => {
+app.get('/', (req,res) => {
   res.send(`This is a backend server that serves an API. The server is currently listening on port ${PORT}. Please visit the frontend.`);
 });
 
