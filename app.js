@@ -11,7 +11,9 @@ const usersRoute = require('./routes/users.routes');
 const authRoute = require('./routes/authentication.routes');
 const {CLIENT_ORIGIN} = require('./config');
 const cors = require('cors');
+const jwtAuth = require('./jwtauth');
 console.log(CLIENT_ORIGIN);
+
 
 // Set up Cors middleware
 app.use(cors({
@@ -29,6 +31,8 @@ app.use(logger('common'));
 
 // Bring in Routes for API resources
 app.use('/api', authRoute);
+
+app.use(jwtAuth);
 app.use('/api', projectsRoute);
 app.use('/api', usersRoute);
 

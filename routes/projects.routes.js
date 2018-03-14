@@ -7,9 +7,11 @@ const knex = require('../db/connect');
 
 //====================================GET ALL PROJECTS============================================================>
 router.get('/projects', (req, res, next) => {
+  console.log('request headers: ', req.headers);
   knex('projects')
     .select('title', 'id', 'technologies', 'discussion', 'created', 'status', 'submittedby', 'volunteers', 'neededby', 'organization', 'description')
     .then(projects => {
+      console.log('server response: ', projects);
       res.json(projects);
     })
     .catch(next);
