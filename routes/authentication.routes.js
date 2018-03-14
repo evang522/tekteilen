@@ -75,6 +75,4 @@ router.get('/refresh', jwtAuth, (req,res,next) => {
     .json({token});
 });
 
-
-
-module.exports = router;
+module.exports = router;              

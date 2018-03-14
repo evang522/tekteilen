@@ -8,7 +8,7 @@ const knex = require('../db/connect');
 //====================================GET ALL PROJECTS============================================================>
 router.get('/projects', (req, res, next) => {
   knex('projects')
-    .select('title', 'id', 'technologies', 'discussion', 'created', 'status', 'submittedby', 'volunteers', 'neededby', 'description')
+    .select('title', 'id', 'technologies', 'discussion', 'created', 'status', 'submittedby', 'volunteers', 'neededby', 'organization', 'description')
     .then(projects => {
       res.json(projects);
     })
@@ -20,11 +20,12 @@ router.get('/projects', (req, res, next) => {
 router.get('/projects/:id', (req, res, next) => {
   const {id} = req.params;
   knex('projects')
-    .select('title', 'id', 'technologies', 'discussion', 'created', 'status', 'submittedby', 'volunteers', 'neededby', 'description')
+    .select('title', 'id', 'technologies', 'discussion', 'created', 'status', 'submittedby', 'volunteers', 'neededby', 'organization', 'description')
     .where({id})
     .then(projects => {
       res.json(projects);
-    });
+    })
+    .catch(next);
 });
 
 

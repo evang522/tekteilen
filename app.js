@@ -9,9 +9,14 @@ const {PORT} = require('./config');
 const projectsRoute = require('./routes/projects.routes');
 const usersRoute = require('./routes/users.routes');
 const authRoute = require('./routes/authentication.routes');
+const {CLIENT_ORIGIN} = require('./config');
+const cors = require('cors');
+console.log(CLIENT_ORIGIN);
 
-
-
+// Set up Cors middleware
+app.use(cors({
+  origin:CLIENT_ORIGIN
+}));
 
 // Set up Body parsing Middleware
 app.use(express.json());
