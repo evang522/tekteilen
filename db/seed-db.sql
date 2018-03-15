@@ -15,15 +15,18 @@ CREATE TABLE users (
   merit int DEFAULT 5,
   isAdmin boolean DEFAULT false,
   phone text,
-  password text not null
+  password text not null,
+  technologies text[]
 );
 
 
 INSERT INTO users (
-  fullname, email, phone, password
-) VALUES (
-  'Evan Garrett', 'evang522@gmail.com', '912 623 8269', '$2a$10$3aVibx1rIxCViPLSgcPDheEZB86ou0jJZAmUIFTocbvOPnhcb.Jkm'
-);
+  fullname, email, phone, password, technologies
+) VALUES 
+  ('Evan Garrett', 'evang522@gmail.com', '912 623 8269', '$2a$10$3aVibx1rIxCViPLSgcPDheEZB86ou0jJZAmUIFTocbvOPnhcb.Jkm', '{Node.js, MongoDB, React}'),
+  ('Jodi Garrett', 'jodijean8gmail.com', '912 233 8256', '$2a$10$3aVibx1rIxCViPLSgcPDheEZB86ou0jJZAmUIFTocbvOPnhcb.Jkm', '{CSS, Design, Wireframing, Photoshop, Lightroom}'),
+  ('George Washington', 'gwashington@federal.us.important.topsecret.gov', '222 222 1222', '$2a$10$3aVibx1rIxCViPLSgcPDheEZB86ou0jJZAmUIFTocbvOPnhcb.Jkm', '{Presidenting, Canoeing, Leading Rebellions}'),
+  ('Jimmy Neutron', 'jneutron@science.ed', '212 223 2269', '$2a$10$3aVibx1rIxCViPLSgcPDheEZB86ou0jJZAmUIFTocbvOPnhcb.Jkm', '{C++, Java, Mechanical Software}');
 
 
 CREATE TABLE projects (

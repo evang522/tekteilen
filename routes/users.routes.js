@@ -13,7 +13,7 @@ const bcrypt = require('bcryptjs');
 //====================================GET ALL USERS============================================================>
 router.get('/users', (req, res, next) => {
   knex('users')
-    .select('id', 'fullname', 'email', 'created', 'merit', 'isadmin', 'phone')
+    .select('id', 'fullname', 'email', 'created', 'merit', 'isadmin', 'phone', 'technologies')
     .then(users => {
       res.json(users);
     })
