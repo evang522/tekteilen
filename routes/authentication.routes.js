@@ -18,7 +18,7 @@ router.post('/login', (req, res, next) => {
   // Then, we will use bcrypt to compre it with the hashed password in the database. 
 
   knex('users')
-    .select('password', 'fullname', 'isadmin')
+    .select('password', 'fullname', 'isadmin','id')
     .where('email', email)
     .then(results => {
       if (!results || results.length === 0) {
@@ -47,7 +47,8 @@ router.post('/login', (req, res, next) => {
             email,
             fullname: results[0].fullname,
             isadmin: results[0].isadmin,
-            iat: Math.floor(Date.now() / 1000) - 30
+            iat: Math.floor(Date.now() / 1000) - 30,
+            id:results[0].id
           };
 
           // Generate token based on user info
