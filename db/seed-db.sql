@@ -1,4 +1,4 @@
-DROP TABLE if exists users;
+DROP TABLE  users, projects, comments CASCADE;
 DROP TABLE if exists projects;
 
 DROP TYPE  IF EXISTS projectstatus;
@@ -61,7 +61,7 @@ INSERT INTO projects (
   '{MongoDB, Node.js}',
   'Open',
   'John Doe',
-  '{}',
+  '{2}',
   'Chosen for Life Ministries'
 ),
 (
@@ -70,7 +70,7 @@ INSERT INTO projects (
   '{Java, Angular, Typescript, Javascript}',
   'Open',
   'Dietrich Hochschule',
-  '{}',
+  '{1,2,3,4}',
   'Wounded Warrior Project'
 ),
 (
@@ -79,7 +79,7 @@ INSERT INTO projects (
   '{Node.js,React,MongoDB}',
   'Open',
   'Jerrly Lowfield',
-  '{1}',
+  '{2,3}',
   'Wilkesboro Baptist Church'
 ),
 (
@@ -88,7 +88,7 @@ INSERT INTO projects (
   '{Node.js,React,MongoDB}',
   'Open',
   'Jerrly Lowfield',
-  '{1}',
+  '{1,2,3}',
   'Test Charity'
 ),
 (
@@ -97,6 +97,24 @@ INSERT INTO projects (
   '{Node.js,React,MongoDB}',
   'Open',
   'Jerrly Lowfield',
-  '{}',
+  '{4,1}',
   'Test Charity'
+);
+
+
+CREATE TABLE comments (
+  id serial PRIMARY KEY,
+  date timestamp DEFAULT current_timestamp,
+  archived boolean DEFAULT false,
+  edited boolean DEFAULT false,
+  author_id integer REFERENCES users ON DELETE SET NULL,
+  project_id integer REFERENCES projects ON DELETE SET NULL,
+  message text NOT NULL
+);
+
+
+INSERT INTO comments (
+  author_id, project_id, message
+) VALUES (
+  1,1, 'Hello!'
 );

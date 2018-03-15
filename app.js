@@ -9,6 +9,7 @@ const {PORT} = require('./config');
 const projectsRoute = require('./routes/projects.routes');
 const usersRoute = require('./routes/users.routes');
 const authRoute = require('./routes/authentication.routes');
+const commentRoute = require('./routes/comments.routes');
 const {CLIENT_ORIGIN} = require('./config');
 const cors = require('cors');
 const jwtAuth = require('./jwtauth');
@@ -35,6 +36,7 @@ app.use('/api', authRoute);
 app.use(jwtAuth);
 app.use('/api', projectsRoute);
 app.use('/api', usersRoute);
+app.use('/api', commentRoute);
 
 
 
