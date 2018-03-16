@@ -7,11 +7,9 @@ const knex = require('../db/connect');
 
 //====================================GET ALL PROJECTS============================================================>
 router.get('/projects', (req, res, next) => {
-  console.log('request headers: ', req.headers);
   knex('projects')
     .select('title', 'id', 'technologies', 'discussion', 'created', 'status', 'submittedby', 'volunteers', 'neededby', 'organization', 'description')
     .then(projects => {
-      console.log('server response: ', projects);
       res.json(projects);
     })
     .catch(next);
@@ -34,6 +32,7 @@ router.get('/projects/:id', (req, res, next) => {
 
 //=====================================================POST route=================================================>
 router.post('/projects', (req, res, next) => {
+  console.log('req body!: ',req.body);
   const fieldList = [
     'title',
     'technologies',
@@ -42,7 +41,8 @@ router.post('/projects', (req, res, next) => {
     'submittedby',
     'volunteers',
     'neededby',
-    'description'
+    'description',
+    'organization'
   ];
   const fields = {};
   fieldList.forEach(field => {
@@ -63,7 +63,8 @@ router.post('/projects', (req, res, next) => {
       'submittedby',
       'volunteers',
       'neededby',
-      'description'
+      'description',
+      'organization'
     ])
     .insert(fields)
     .then(newProject => {
@@ -129,21 +130,31 @@ router.put('/projects/:id', (req,res,next) => {
 //===================================DELETE ROUTE==================================================>
 router.delete('/projects/:id', (req,res,next) => {
   const {id} = req.params;
+  
+  if (req.user.isAdmin) {
 
-  knex('projects')
-    .where('id', id)
-    .del()
-    .then(response => {
-      if (response) {
-        return res.status(204).end();
-      } 
-      const err = new Error;
-      err.message = 'A project with this ID could not be found, so nothing was deleted';
-      err.status = 404;
-      return next(err);
-    })
-    .catch(next);
+    return knex('projects')
+      .where('id', id)
+      .del()
+      .then(response => {
+        if (response) {
+          return res.status(204).end();
+        } 
+        const err = new Error;
+        err.message = 'A project with this ID could not be found, so nothing was deleted';
+        err.status = 404;
+        return next(err);
+      })
+      .catch(next);
+
+  } 
+  const err = new Error();
+  err.message = 'Not Authorized. Only Administrators can delete Projects';
+  err.status = 403;
+  next(err);
 });
+
+
 
 
 module.exports = router;

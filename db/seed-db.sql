@@ -39,7 +39,7 @@ CREATE TABLE projects (
   submittedby text,
   -- TODO need to reference user IDs
   volunteers int[],
-  neededby timestamp,
+  neededby text,
   description text not null,
   organization text not null
 );
@@ -107,14 +107,14 @@ CREATE TABLE comments (
   date timestamp DEFAULT current_timestamp,
   archived boolean DEFAULT false,
   edited boolean DEFAULT false,
-  author_id integer REFERENCES users ON DELETE SET NULL,
+  user_id integer REFERENCES users ON DELETE SET NULL,
   project_id integer REFERENCES projects ON DELETE SET NULL,
   message text NOT NULL
 );
 
 
 INSERT INTO comments (
-  author_id, project_id, message
+  user_id, project_id, message
 ) VALUES (
   1,1, 'Hello!'
 );
