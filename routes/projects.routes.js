@@ -131,7 +131,7 @@ router.put('/projects/:id', (req,res,next) => {
 router.delete('/projects/:id', (req,res,next) => {
   const {id} = req.params;
   
-  if (req.user.isAdmin) {
+  if (req.user.isadmin) {
 
     return knex('projects')
       .where('id', id)

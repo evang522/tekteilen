@@ -47,9 +47,9 @@ app.get('/', (req,res) => {
 
 
 app.use((err,req,res,next) => {
-  // if (process.env.ENVIRONMENT === 'dev') {
-  //   console.log(err);
-  // }
+  if (process.env.ENVIRONMENT === 'dev') {
+    console.log(err);
+  }
   err.status = err.status || 500;
   err.message = err.message || 'Internal Server Error';
   res.status(err.status).json({

@@ -13,7 +13,7 @@ CREATE TABLE users (
   email text not null UNIQUE,
   created timestamp DEFAULT current_timestamp,
   merit int DEFAULT 5,
-  isAdmin boolean DEFAULT false,
+  isadmin boolean DEFAULT false,
   phone text,
   password text not null,
   technologies text[]
@@ -21,12 +21,12 @@ CREATE TABLE users (
 
 
 INSERT INTO users (
-  fullname, email, phone, password, technologies
+  fullname, email, phone, password, technologies, isadmin
 ) VALUES 
-  ('Evan Garrett', 'evang522@gmail.com', '912 623 8269', '$2a$10$3aVibx1rIxCViPLSgcPDheEZB86ou0jJZAmUIFTocbvOPnhcb.Jkm', '{Node.js, MongoDB, React}'),
-  ('Jodi Garrett', 'jodijean8gmail.com', '912 233 8256', '$2a$10$3aVibx1rIxCViPLSgcPDheEZB86ou0jJZAmUIFTocbvOPnhcb.Jkm', '{CSS, Design, Wireframing, Photoshop, Lightroom}'),
-  ('George Washington', 'gwashington@federal.us.important.topsecret.gov', '222 222 1222', '$2a$10$3aVibx1rIxCViPLSgcPDheEZB86ou0jJZAmUIFTocbvOPnhcb.Jkm', '{Presidenting, Canoeing, Leading Rebellions}'),
-  ('Jimmy Neutron', 'jneutron@science.ed', '212 223 2269', '$2a$10$3aVibx1rIxCViPLSgcPDheEZB86ou0jJZAmUIFTocbvOPnhcb.Jkm', '{C++, Java, Mechanical Software}');
+  ('Evan Garrett', 'evang522@gmail.com', '912 623 8269', '$2a$10$3aVibx1rIxCViPLSgcPDheEZB86ou0jJZAmUIFTocbvOPnhcb.Jkm', '{Node.js, MongoDB, React}', true),
+  ('Jodi Garrett', 'jodijean8@gmail.com', '912 233 8256', '$2a$10$3aVibx1rIxCViPLSgcPDheEZB86ou0jJZAmUIFTocbvOPnhcb.Jkm', '{CSS, Design, Wireframing, Photoshop, Lightroom}', false),
+  ('George Washington', 'gwashington@federal.us.important.topsecret.gov', '222 222 1222', '$2a$10$3aVibx1rIxCViPLSgcPDheEZB86ou0jJZAmUIFTocbvOPnhcb.Jkm', '{Presidenting, Canoeing, Leading Rebellions}', false),
+  ('Jimmy Neutron', 'jneutron@science.ed', '212 223 2269', '$2a$10$3aVibx1rIxCViPLSgcPDheEZB86ou0jJZAmUIFTocbvOPnhcb.Jkm', '{C++, Java, Mechanical Software}', false);
 
 
 CREATE TABLE projects (
