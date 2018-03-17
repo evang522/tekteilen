@@ -1,5 +1,4 @@
-DROP TABLE  users, projects, comments CASCADE;
-DROP TABLE if exists projects;
+DROP TABLE IF EXISTS users, projects, comments CASCADE;
 
 DROP TYPE  IF EXISTS projectstatus;
 CREATE TYPE projectstatus AS ENUM ('Open', 'Closed');
