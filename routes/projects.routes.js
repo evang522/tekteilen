@@ -78,6 +78,7 @@ router.post('/projects', (req, res, next) => {
 router.put('/projects/:id', (req,res,next) => {
   const { id } = req.params;
   const {userId} = req.body;
+  console.log(req.body);
 
 
   if (req.body.requestType === 'addVolunteer') {
@@ -92,12 +93,19 @@ router.put('/projects/:id', (req,res,next) => {
     return knex('projects')
       .where('id',id)
       .then(response => {
-        if (response[0].volunteers.includes(userId)) {
-          const err = new Error();
-          err.status = 400;
-          err.message = 'You are already joined to this project!';
-          return Promise.reject(err);
+        try {
+          if (response[0].volunteers.length > 0) {
+            if (response[0].volunteers.includes(userId)) {
+              const err = new Error();
+              err.status = 400;
+              err.message = 'You are already joined to this project!';
+              return Promise.reject(err);
+            }
+          }
+        } catch (e) {
+          console.log('Error occured because volunteers was not defined');
         }
+        
       })
       .then(() => {
 
@@ -122,6 +130,35 @@ router.put('/projects/:id', (req,res,next) => {
       });
 
   }
+
+  // Deal with REMOVE volunteer Request
+
+  
+  if (req.body.requestType === 'removeVolunteer') {
+    if (!userId) {
+      const err = new Error();
+      err.status = 400;
+      err.message = 'Missing Volunteer Id!';
+      return next(err);
+    }
+
+
+    return knex('projects')
+      .where('id',id)
+      .update({
+        volunteers: knex.raw('array_remove("volunteers", ? )', [`${userId}`])
+      })
+      .then(response => {
+        res.status(200).end();
+      })
+      .catch(err => {
+        return next(err);
+      });
+
+  }
+
+
+
   const updateFieldList = [
     'title',
     'technologies',
