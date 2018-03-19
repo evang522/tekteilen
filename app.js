@@ -32,10 +32,10 @@ app.use(logger('common'));
 
 // Bring in Routes for API resources
 app.use('/api', authRoute);
+app.use('/api', usersRoute);
 
 app.use(jwtAuth);
 app.use('/api', projectsRoute);
-app.use('/api', usersRoute);
 app.use('/api', commentRoute);
 
 

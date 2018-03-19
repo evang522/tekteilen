@@ -8,10 +8,10 @@ const express = require('express');
 const router = express.Router();
 const knex = require('../db/connect');
 const bcrypt = require('bcryptjs');
-// const salt = bcrypt.genSalt(10);
+const jwtAuth = require('../jwtauth');
 
 //====================================GET ALL USERS============================================================>
-router.get('/users', (req, res, next) => {
+router.get('/users', jwtAuth, (req, res, next) => {
   knex('users')
     .select('id', 'fullname', 'email', 'created', 'merit', 'isadmin', 'phone', 'technologies')
     .then(users => {
@@ -22,7 +22,7 @@ router.get('/users', (req, res, next) => {
 });
 
 //=======================================GET USER BY ID=========================================================>
-router.get('/users/:id', (req, res, next) => {
+router.get('/users/:id', jwtAuth, (req, res, next) => {
   const {id} = req.params;
   knex('users')
     .select('id', 'fullname', 'email', 'created', 'merit', 'isadmin', 'phone')
@@ -150,7 +150,7 @@ router.post('/users', (req, res, next) => {
 // });
 
 //===================================DELETE USER ROUTE==================================================>
-router.delete('/users/:id', (req,res,next) => {
+router.delete('/users/:id',  jwtAuth, (req,res,next) => {
   const {id} = req.params;
 
   knex('users')

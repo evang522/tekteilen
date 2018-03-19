@@ -6,7 +6,6 @@ const verifyToken = (req,res,next) => {
   // Throw an error if there is no Authorization Header present in the request
   
   if (!req.headers.authorization) {
-    console.log('there was not an authorization header');
     const err = new Error;
     err.message='Not authorized to access this endpoint, no JSON web token Present';
     err.status=403;

@@ -32,7 +32,6 @@ router.get('/projects/:id', (req, res, next) => {
 
 //=====================================================POST route=================================================>
 router.post('/projects', (req, res, next) => {
-  console.log('req body!: ',req.body);
   const fieldList = [
     'title',
     'technologies',
@@ -78,6 +77,51 @@ router.post('/projects', (req, res, next) => {
 
 router.put('/projects/:id', (req,res,next) => {
   const { id } = req.params;
+  const {userId} = req.body;
+
+
+  if (req.body.requestType === 'addVolunteer') {
+    if (!userId) {
+      const err = new Error();
+      err.status = 400;
+      err.message = 'Missing Volunteer Id!';
+      return next(err);
+    }
+
+    // Checking to see if the user is already listed as a volunteer on the project
+    return knex('projects')
+      .where('id',id)
+      .then(response => {
+        if (response[0].volunteers.includes(userId)) {
+          const err = new Error();
+          err.status = 400;
+          err.message = 'You are already joined to this project!';
+          return Promise.reject(err);
+        }
+      })
+      .then(() => {
+
+        return knex('projects')
+          .where('id',id)
+          .update({
+            volunteers: knex.raw('array_append("volunteers", ? )', [`${userId}`])
+          })
+          .then(response => {
+            if (response === 0) {
+              const err = new Error();
+              err.status = 404;
+              err.message = 'A project with this ID could not be found.';
+              Promise.reject(err);
+            }
+            res.status(200).end();
+          });
+
+      })
+      .catch(err => {
+        next(err);
+      });
+
+  }
   const updateFieldList = [
     'title',
     'technologies',
