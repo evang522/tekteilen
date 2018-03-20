@@ -44,12 +44,18 @@ router.post('/projects', (req, res, next) => {
     'organization'
   ];
   const fields = {};
+
+  console.log(req.body);
   fieldList.forEach(field => {
-    if (field === 'title' && !req.body.field) {
-      console.log('missing field');
+    if (field === 'title' && !req.body[field]) {
+      const err =  new Error();
+      err.message =  `Missing ${field} field`; 
+      return next(err);
     }
     fields[field] = req.body[field];
   });
+
+  fields.technologies = fields.technologies ? fields.technologies.split(',') : 'No technologies provided';
 
   knex('projects')
     .returning([
