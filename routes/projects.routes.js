@@ -164,7 +164,6 @@ router.put('/projects/:id', (req,res,next) => {
   }
 
 
-
   const updateFieldList = [
     'title',
     'technologies',
