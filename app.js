@@ -60,7 +60,26 @@ app.use((err,req,res,next) => {
 
 
 // Set app to listen on config port
-app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
-});
+const runServer = () => {
+  return new Promise((resolve,reject) => {
+    app.listen(PORT, (err) => {
+      if (err) {
+        return reject(err);
+      }
+      console.log(`Server listening on port ${PORT}`);
+      resolve();
+    });
+  });
+};
 
+
+
+if (require.main === module) {
+  runServer().catch(console.log);
+}
+
+
+module.exports= {
+  runServer,
+  app
+};
