@@ -37,7 +37,7 @@ router.get('/users/:id', jwtAuth, (req, res, next) => {
 //=====================================================CREATE NEW USER=================================================>
 router.post('/users', (req, res, next) => {
 
-  const requiredFields = ['fullname','email','password'];
+  const requiredFields = ['fullname','email','password','password1'];
   const newUser = {};
 
 
@@ -45,7 +45,7 @@ router.post('/users', (req, res, next) => {
 
   requiredFields.forEach(field => {
     if (!(field in req.body)) {
-      const err = new Error;
+      const err = new Error();
       err.message = `Missing ${field} field`;
       err.status = 400;
       return next(err);
@@ -56,26 +56,35 @@ router.post('/users', (req, res, next) => {
 
 
   if (newUser.password.length < 8) {
-    const err = new Error;
+    const err = new Error();
     err.status = 400;
     err.message = 'Password should be at least 8 characters long';
     return next(err);
   }
 
   if (newUser.password.trim().length !== newUser.password.length) {
-    const err = new Error;
+    const err = new Error();
     err.status = 400;
     err.message = 'Password should not contain white space';
     return next(err);
   }
 
-  if (!newUser.email.includes('@')) {
+  if (newUser.password !== newUser.password1) {
+    const err = new Error();
+    err.status = 400;
+    err.message = 'Passwords do not match';
+    return next(err);
+  }
+ 
+  if (!newUser.email.includes('@') || !newUser.email.includes('.')) {
     const err = new Error;
     err.status = 400;
     err.message = 'Email format is not correct';
     return next(err);
   }
 
+  // Removing the secondary password so the DB doesn't choke on it
+  delete newUser.password1;
 
   bcrypt.genSalt(10, (err,salt) => {
     bcrypt.hash(newUser.password, salt, (err,hash) => {
@@ -86,7 +95,15 @@ router.post('/users', (req, res, next) => {
         .then(newProject => {
           res.status(201).json(newProject);
         })
-        .catch(next);
+        .catch(err => {
+          if (err.code === '23505') {
+            const err = new Error();
+            err.message='There is already an account with this Email!';
+            err.status= 400;
+            return next(err);
+          }
+          next(err);
+        });
   
     });
   });
