@@ -37,7 +37,7 @@ router.get('/users/:id', jwtAuth, (req, res, next) => {
 //=====================================================CREATE NEW USER=================================================>
 router.post('/users', (req, res, next) => {
 
-  const requiredFields = ['fullname','email','password','password1'];
+  const requiredFields = ['fullname','email','password','password1', 'technologies'];
   const newUser = {};
 
 
@@ -46,13 +46,18 @@ router.post('/users', (req, res, next) => {
   requiredFields.forEach(field => {
     if (!(field in req.body)) {
       const err = new Error();
-      err.message = `Missing ${field} field`;
+
+      err.message = field==='password1' ? 'Missing verify password Field' : `Missing ${field} field`;
       err.status = 400;
       return next(err);
     }
     newUser[field] = req.body[field];
 
   });
+
+
+  let techsArr = newUser.technologies.split(',');
+  newUser.technologies = techsArr.map(skill => skill.trim());
 
 
   if (newUser.password.length < 8) {
@@ -90,7 +95,7 @@ router.post('/users', (req, res, next) => {
     bcrypt.hash(newUser.password, salt, (err,hash) => {
       newUser.password= hash;
       return knex('users')
-        .returning(['id', 'fullname', 'email', 'created', 'merit', 'isadmin', 'phone'])
+        .returning(['id', 'fullname', 'email', 'created', 'technologies', 'merit', 'isadmin'])
         .insert(newUser)
         .then(newProject => {
           res.status(201).json(newProject);
