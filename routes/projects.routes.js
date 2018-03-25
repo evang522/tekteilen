@@ -7,8 +7,14 @@ const knex = require('../db/connect');
 
 //====================================GET ALL PROJECTS============================================================>
 router.get('/projects', (req, res, next) => {
+  const {q} = req.query; 
   knex('projects')
     .select('title', 'id', 'technologies', 'discussion', 'created', 'status', 'submittedby', 'volunteers', 'neededby', 'organization', 'description')
+    .where(function () {
+      if (q) {
+        this.whereRaw(`LOWER(title) LIKE '%${q.toLowerCase()}%'`);
+      }
+    })
     .then(projects => {
       res.json(projects);
     })
@@ -45,7 +51,6 @@ router.post('/projects', (req, res, next) => {
   ];
   const fields = {};
 
-  console.log(req.body);
   fieldList.forEach(field => {
     if (field === 'title' && !req.body[field]) {
       const err =  new Error();
@@ -56,6 +61,14 @@ router.post('/projects', (req, res, next) => {
   });
 
   fields.technologies = fields.technologies ? fields.technologies.split(',') : 'No technologies provided';
+
+  if (fields.title.length > 60) {
+
+    const err = new Error();
+    err.message = 'Project title cannot be longer than 60 Characters';
+    err.status = 400;
+    return next(err);
+  }
 
   knex('projects')
     .returning([
@@ -84,7 +97,6 @@ router.post('/projects', (req, res, next) => {
 router.put('/projects/:id', (req,res,next) => {
   const { id } = req.params;
   const {userId} = req.body;
-  console.log(req.body);
 
 
   if (req.body.requestType === 'addVolunteer') {

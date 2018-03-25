@@ -85,11 +85,22 @@ io.on('connection', socket => {
   socket.on('new-chat-message', data => {
     console.log('new chat message was emitted by client: ', data.projectId);
 
-      
     setTimeout(() => {
       socket.broadcast.emit(`chat-project-${data.projectId}`, 'new message');
     }, 50);
   });
+
+
+  socket.on('volunteer change', data => {
+    const address = `volunteer-change-project-${data.projectId}`;
+
+    setTimeout(() => {
+      socket.broadcast.emit(address, 'volunteer change');
+    }, 1000);
+  
+  });
+
+  
   
 });
 
