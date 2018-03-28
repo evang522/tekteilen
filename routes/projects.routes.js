@@ -7,12 +7,15 @@ const knex = require('../db/connect');
 
 //====================================GET ALL PROJECTS============================================================>
 router.get('/projects', (req, res, next) => {
-  const {q} = req.query; 
+  let {q} = req.query; 
+  if (q) {
+    q = q.split('').filter(c => c !== '\'').join('');
+  }
   knex('projects')
     .select('title', 'id', 'technologies', 'discussion', 'created', 'status', 'submittedby', 'volunteers', 'neededby', 'organization', 'description')
     .where(function () {
       if (q) {
-        this.whereRaw(`LOWER(title) LIKE '%${q.toLowerCase()}%'`);
+        this.whereRaw(`LOWER(title) LIKE '%${q.toLowerCase()}%' OR LOWER(description) LIKE '%${q.toLowerCase()}%' OR LOWER(organization) LIKE '%${q.toLowerCase()}%' OR '${q}' ILIKE ANY(technologies)`);
       }
     })
     .then(projects => {
